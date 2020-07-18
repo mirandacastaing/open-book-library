@@ -9,17 +9,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     
-    - name: Beanstalk Deploy
-      uses: einaregilsson/beanstalk-deploy@v4
-      with:
-        aws_access_key: 
-        aws_secret_key: 
-        region: 
-        application_name: 
-        environment_name: 
-        version_label: 
-        deployment_package: 
-    
     - name: Cache node modules
       uses: actions/cache@v1
       with:
@@ -54,3 +43,17 @@ jobs:
         string: "${{ steps.current-time.outputs.time }}"
         replace-with: '-'
         flags: 'g'
+        
+    - name: Beanstalk Deploy my app
+      uses: einaregilsson/beanstalk-deploy@v4
+      with:
+        aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
+        aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
+        application_name: Open Book Library
+        environment_name: open-book-library-env-1
+        region: us-east-1
+        version_label: "my-app-${{ steps.format-time.outputs.replaced }}" // Using timestamp create on step #
+        deployment_package: deploy.zip
+
+    - name: Deployed successfully!
+      run: echo App deployed to ELB

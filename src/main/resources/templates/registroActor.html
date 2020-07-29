@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<meta http-equiv="Content-Type" content="text/html"></meta>
+<title>Producciones Pomponio</title>
+</head>
+<body>
+	<div>
+		<h1>Registro de Actor/Actriz</h1>
+		<h4>
+			<a href="/">REGRESAR</a>
+		</h4>
+		<form action="#" th:action="@{/listaActores}" th:object="${actor}"
+			method="post">
+			<p>
+				NOMBRE <input type="text" id="txtNombre" th:field="*{nombre}" />
+			</p>
+			<p>
+				GÉNERO <select th:field="*{genero}">
+					<option value="H">Hombre</option>
+					<option value="M">Mujer</option>
+					<option value="O">Otro</option>
+				</select>
+			</p>
+			<p>
+				FECHA DE NACIMIENTO <input type="date" id="txtNacimiento"
+					th:field="*{nacimiento}" />
+			</p>
+			<p>
+				ESTATURA <input type="number" id="txtEstatura"
+					th:field="*{estatura}" /> cm
+			</p>
+			<p>
+				COMPLEXIÓN CORPORAL <select th:field="*{complexion}">
+					<option value="F">Flaco/a</option>
+					<option value="R">Regular</option>
+					<option value="G">Grueso/a</option>
+				</select>
+			</p>
+			<p>
+				COLOR DE OJOS <input type="text" id="txtOjos" th:field="*{ojos}" />
+			</p>
+			<p>
+				COLOR DE PELO <input type="text" id="txtPelo" th:field="*{pelo}" />
+			</p>
+			<p>
+				<input type="button" id="btnRegistrar" value="Registrar" /> <input
+					type="reset" id="btnReiniciar" value="Reiniciar" />
+			</p>
+		</form>
+	</div>
+</body>
+<style>
+.error_input {
+	border: 2px solid #eb4d4b;
+}
+</style>
+<script th:inline="javascript">
+	'use strict';
+
+	const inputNombre = document.querySelector('#txtNombre');
+	const inputNacimiento = document.querySelector('#txtNacimiento');
+	const inputEstatura = document.querySelector('#txtEstatura');
+	const inputOjos = document.querySelector('#txtOjos');
+	const inputPelo = document.querySelector('#txtPelo');
+
+	const botonRegistrar = document.querySelector('#btnRegistrar');
+	const botonReiniciar = document.querySelector('#btnReiniciar');
+
+	function validar() {
+		let error = false;
+
+		let nombre = inputNombre.value;
+		let nacimiento = new Date(inputNacimiento.value);
+		let estatura = inputEstatura.value;
+		let ojos = inputOjos.value;
+		let pelo = inputPelo.value;
+
+		let fechaActual = new Date();
+
+		if (nombre == '') {
+			error = true;
+			inputNombre.classList.add('error_input');
+		} else {
+			inputNombre.classList.remove('error_input');
+		}
+
+		if (nacimiento == 'Invalid Date') {
+			error = true;
+			inputNacimiento.classList.add('error_input');
+		} else {
+			if (fechaActual.getFullYear() - nacimiento.getFullYear() < 0) {
+				error = true;
+				inputNacimiento.classList.add('error_input');
+			} else {
+				if (fechaActual.getFullYear() == nacimiento.getFullYear()
+						&& fechaActual.getMonth() - nacimiento.getMonth() < 0) {
+					error = true;
+					inputNacimiento.classList.add('error_input');
+				} else {
+					if (fechaActual.getFullYear() == nacimiento
+							.getFullYear()
+							&& fechaActual.getMonth() == nacimiento
+									.getMonth()
+							&& fechaActual.getDate()
+									- (nacimiento.getDate() + 1) < 0) {
+						error = true;
+						inputNacimiento.classList.add('error_input');
+					} else {
+						inputNacimiento.classList.remove('error_input');
+					}
+				}
+			}
+		}
+		
+		if (estatura < 40 || estatura > 275) {
+	        error = true;
+	        inputEstatura.classList.add('error_input');
+	    } else {
+	        inputEstatura.classList.remove('error_input');
+	    }
+		
+		if (ojos == '') {
+			error = true;
+			inputOjos.classList.add('error_input');
+		} else {
+			inputOjos.classList.remove('error_input');
+		}
+		
+		if (pelo == '') {
+			error = true;
+			inputPelo.classList.add('error_input');
+		} else {
+			inputPelo.classList.remove('error_input');
+		}
+
+		if (!error)
+			this.form.submit();
+	}
+
+	function reiniciar() {
+		inputNombre.classList.remove('error_input');
+		inputNacimiento.classList.remove('error_input');
+		inputEstatura.classList.remove('error_input');
+		inputOjos.classList.remove('error_input');
+		inputPelo.classList.remove('error_input');
+	}
+
+	botonRegistrar.addEventListener('click', validar);
+	botonReiniciar.addEventListener('click', reiniciar);
+</script>
+</html>

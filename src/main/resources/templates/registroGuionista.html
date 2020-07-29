@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-US" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<meta http-equiv="Content-Type" content="text/html"></meta>
+<title>Producciones Pomponio</title>
+</head>
+<body>
+	<div>
+		<h1>Registro de Guionista</h1>
+		<h4>
+			<a href="/">REGRESAR</a>
+		</h4>
+		<form action="#" th:action="@{/}" th:object="${guionista}"
+			method="post">
+			<p>
+				NOMBRE <input type="text" id="txtNombre" th:field="*{nombre}" />
+			</p>
+			<p>
+				EMAIL <input type="email" id="txtEmail" th:field="*{email}" /><br>
+				<span id="msgEmail" style="display: none; color: #eb4d4b;"><small>
+						Ya existe un guionista registrado con ese email</small></span>
+			</p>
+			<p>
+				FECHA DE NACIMIENTO <input type="date" id="txtNacimiento"
+					th:field="*{nacimiento}" />
+			<p>
+				DIRECCIÓN
+				<textarea id="txtDireccion" th:field="*{direccion}"></textarea>
+			</p>
+			<p>
+				<input type="button" id="btnRegistrar" value="Registrar" /> <input
+					type="reset" id="btnReiniciar" value="Reiniciar" />
+			</p>
+		</form>
+	</div>
+</body>
+<style>
+.error_input {
+	border: 2px solid #eb4d4b;
+}
+</style>
+<script th:inline="javascript">
+	'use strict';
+
+	const inputNombre = document.querySelector('#txtNombre');
+	const inputEmail = document.querySelector('#txtEmail');
+	const messageEmail = document.querySelector('#msgEmail');
+	const inputNacimiento = document.querySelector('#txtNacimiento');
+	const inputDireccion = document.querySelector('#txtDireccion');
+
+	const botonRegistrar = document.querySelector('#btnRegistrar');
+	const botonReiniciar = document.querySelector('#btnReiniciar');
+
+	function validar() {
+		let error = false;
+
+		let nombre = inputNombre.value;
+		let email = inputEmail.value;
+		let nacimiento = new Date(inputNacimiento.value);
+		let direccion = inputDireccion.value;
+
+		let regExpEmail = /^[0-9a-zA-Z(.)(_)-]+@[0-9a-z-]+[.][a-z(.)]+$/;
+		let fechaActual = new Date();
+
+		if (nombre == '') {
+			error = true;
+			inputNombre.classList.add('error_input');
+		} else {
+			inputNombre.classList.remove('error_input');
+		}
+
+		if (email == '' || regExpEmail.test(email) == false) {
+			error = true;
+			inputEmail.classList.add('error_input');
+		} else {
+			let correoRepetido = false;
+
+			/*<![CDATA[*/
+
+			var guionistas = /*[[${guionistas}]]*/'default';
+			guionistas.forEach(validarCorreo);
+
+			function validarCorreo(item, index) {
+				if (item.email == email) {
+					error = true;
+					correoRepetido = true;
+					inputEmail.classList.add('error_input');
+					messageEmail.style.removeProperty('display');
+				}
+			}
+
+			/*]]>*/
+
+			if (!correoRepetido) {
+				inputEmail.classList.remove('error_input');
+				messageEmail.style.display = "none";
+			}
+		}
+
+		if (nacimiento == 'Invalid Date') {
+			error = true;
+			inputNacimiento.classList.add('error_input');
+		} else {
+			if (fechaActual.getFullYear() - nacimiento.getFullYear() < 0) {
+				error = true;
+				inputNacimiento.classList.add('error_input');
+			} else {
+				if (fechaActual.getFullYear() == nacimiento.getFullYear()
+						&& fechaActual.getMonth() - nacimiento.getMonth() < 0) {
+					error = true;
+					inputNacimiento.classList.add('error_input');
+				} else {
+					if (fechaActual.getFullYear() == nacimiento.getFullYear()
+							&& fechaActual.getMonth() == nacimiento.getMonth()
+							&& fechaActual.getDate()
+									- (nacimiento.getDate() + 1) < 0) {
+						error = true;
+						inputNacimiento.classList.add('error_input');
+					} else {
+						inputNacimiento.classList.remove('error_input');
+					}
+				}
+			}
+		}
+
+		if (direccion == '') {
+			error = true;
+			inputDireccion.classList.add('error_input');
+		} else {
+			inputDireccion.classList.remove('error_input');
+		}
+
+		if (!error)
+			this.form.submit();
+	}
+
+	function reiniciar() {
+		inputNombre.classList.remove('error_input');
+		inputEmail.classList.remove('error_input');
+		inputNacimiento.classList.remove('error_input');
+		inputDireccion.classList.remove('error_input');
+
+		messageEmail.style.display = "none";
+	}
+
+	botonRegistrar.addEventListener('click', validar);
+	botonReiniciar.addEventListener('click', reiniciar);
+</script>
+</html>
